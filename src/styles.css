@@ -1,0 +1,21 @@
+.App {
+    font-family: sans-serif;
+    text-align: center;
+}
+
+.line {
+    justify-content: start;
+    display: flex;
+    overflow-x: scroll;
+    font-family: monospace;
+    overflow-y: hidden;
+}
+
+.line:hover {
+    cursor: pointer;
+    background-color: gray;
+}
+
+.bookmark {
+    background-color: yellow;
+}
