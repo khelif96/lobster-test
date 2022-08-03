@@ -3,16 +3,16 @@ import axios from "axios";
 import { useAppContext } from "./AppContext";
 import { useNavigate } from "react-router-dom";
 
-// logs from logs_naa to logs_nca"
 
 
 
 const Loader = () => {
     const [downloadProgress, setDownloadProgress] = useState(0);
-    const { setLogs, logs } = useAppContext();
+    const { setLogs } = useAppContext();
     const navigate = useNavigate();
     useEffect(() => {
-        testPaginatedLogs(setDownloadProgress, setLogs, logs, navigate)
+        // testPaginatedLogs(setDownloadProgress, setLogs, logs, navigate)
+        testSingleLogDownload(setDownloadProgress, setLogs, navigate)
     }, []);
     
     return (
@@ -26,6 +26,7 @@ const Loader = () => {
 }
 
 
+// This represents a path to a large log file that was split into 100k line chunks
 const logs_array = ["logs_naa", "logs_nab", "logs_nac", "logs_nad", "logs_nae", "logs_naf",
  "logs_nag", "logs_nah", "logs_nai", "logs_naj", "logs_nak", "logs_nal", "logs_nam", "logs_nan",
   "logs_nao", "logs_nap", "logs_naq", "logs_nar", "logs_nas", "logs_nat", "logs_nau", "logs_nav",
@@ -61,7 +62,8 @@ const testPaginatedLogs = (setDownloadProgress: (percent: number) => void, setLo
 }
 
 const testSingleLogDownload = (setDownloadProgress: (percent: number) => void, setLogs: (logs: string[]) => void, navigate : (path: string) => void) => {
-    axios.get(`http://localhost:3000/${logs_array[0]}`, {
+    // Random logkeeper log
+    axios.get(`https://logkeeper.mongodb.org/build/f65bd46cbd26f244ba97965e36d0ace9/test/62ea3bdf9041307bcb7b98d9?raw=1`, {
         maxBodyLength: Infinity,
         maxContentLength: Infinity,
       onDownloadProgress: (progressEvent) => {
