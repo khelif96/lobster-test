@@ -1,15 +1,69 @@
-import {useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import axios from "axios";
 import { useAppContext } from "./AppContext";
 import { useNavigate } from "react-router-dom";
-const tempS3N2Million = "https://s3.us-east-1.amazonaws.com/john.liu/logs_n2million.txt?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOL%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJIMEYCIQCOuoC9Jl9Nh6%2FxJML%2BCPm4HaCW%2B23Rs%2FshTYR%2Ftd36LQIhAK6X115NgEzz%2BBSMSl7BexHzdGVuSwj5M3%2FnwwQ5YA%2FPKqEECDsQABoMNTU3ODIxMTI0Nzg0Igxi0rzlVI3d%2Fo%2BDlZIq%2FgOINoEQA7UhzXf%2FC3QE4gYonT2%2BjoEodmHztyXdtUrrUC%2Bj2e%2FESwdtTeGWMVmO1xKYD4T3%2FPOIDEGSQ5fe6yimsUn0Wg6VgM63rYlHP%2B0r4C005JUNB8zsJkuMairxlgwp4OQYjl%2FPzDUXGT1pIJ14gbCh%2FTScVteS4LlhxJhOTrXdgn5mEr62xt3Hjo1e1Exak7Yc0shUll6%2Fr9M7jhllwUu05Fw26b%2F6SlS%2BU%2BhPA9R%2BTeE0PyKGIUzWnN3hDDA2NAJ%2Fsh0mE2VtRLL0wCZD%2F2pjFcjQymTUxtIh28HRkVRtC86GmMWsUqGCcRYAahHQtr%2FcyZ3%2BV3NUo5bTe%2Ftjc6gGJJ3pmGCPxA9cQGRhBMjrrlF5dK48BdKGXBiZ8%2B9RZ%2F63q9vEbFqu%2BMQdSARaZTNUJZvaBQpe6k0HYlST0xo6a3sZKW6qwQhSw7UTLckWTTEC%2Bv6lUvQhqQ6ORHgGOXxUih%2BbSPWoC4cbWhzmGpgdM9fZIY7DHTboX0nVlvBU7t4uOpDmONykz1f7dTKBwJCtaiQiGGHNW5qhYhBcj%2FmWQqXTMUO%2FuXNKLC1EvQHLYDceK3CxKIVouK0g7JOZi7xSBvoS7NBXzdFTdjibKjicuRetNruvRanICeGReTbAOzQnLbqDsQeeQ0HwJhcm37dOjR7XNtiA1iXHyOown7qXlwY6kwKSRxgVym1EKWsr5gwgGzU6ER26GigbawygXMBAIICsUiFxpDmDjn8dU5Syh3BZWDx4YFqbsYXTFgW9ojA30gWtDSsMCKSrPaF7TVOKxjJ3GJd1rhDBd65GMSISfvPWJn1I2heWliWDWHR1PK8Zwvvqg1H%2BpBRv1favxKPt4VDnApJ9XgtLMCJE6j8W2IYOagcSSAkoW0ktLhFZ07gJ4FjaCqMbXq2cGZiTD6%2B0Z8sulks%2BLKIrTGDLTMG2NRkbeByjXyDPdM0ucE8y593nbJYhXzZdoXBnVD7O6OZNwZRZ2W132OiKZujW9MwIbniDg4jVlVlrnb6UjgBfPnRoKgJ4Q4v8iwLmfovFKSv0dV1aUBNFdA%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20220731T013910Z&X-Amz-SignedHeaders=host&X-Amz-Expires=43200&X-Amz-Credential=ASIAYDYF24CYIK4UIML7%2F20220731%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=d6b5616727516d0dc14a8dcdc3ff1af04b7ffba3656df4508f51fe42d1ae851a";
+
+// logs from logs_naa to logs_nca"
+
+
 
 const Loader = () => {
-      const [downloadProgress, setDownloadProgress] = useState(0);
-    const { setLogs } = useAppContext();
+    const [downloadProgress, setDownloadProgress] = useState(0);
+    const { setLogs, logs } = useAppContext();
     const navigate = useNavigate();
-      useEffect(() => {
-     axios.get(tempS3N2Million, {
+    useEffect(() => {
+        testPaginatedLogs(setDownloadProgress, setLogs, logs, navigate)
+    }, []);
+    
+    return (
+        <div className="Loader">
+               {downloadProgress > 0 && downloadProgress < 100 && (
+                   <i>Downloading: {downloadProgress} %</i> 
+                   )}
+
+    </div>
+  )
+}
+
+
+const logs_array = ["logs_naa", "logs_nab", "logs_nac", "logs_nad", "logs_nae", "logs_naf",
+ "logs_nag", "logs_nah", "logs_nai", "logs_naj", "logs_nak", "logs_nal", "logs_nam", "logs_nan",
+  "logs_nao", "logs_nap", "logs_naq", "logs_nar", "logs_nas", "logs_nat", "logs_nau", "logs_nav",
+   "logs_naw", "logs_nax", "logs_nay", "logs_naz", "logs_nba", "logs_nbb", "logs_nbc", "logs_nbd",
+    "logs_nbe", "logs_nbf", "logs_nbg", "logs_nbh", "logs_nbi", "logs_nbj", "logs_nbk", "logs_nbl",
+     "logs_nbm", "logs_nbn", "logs_nbo", "logs_nbp", "logs_nbq", "logs_nbr", "logs_nbs", "logs_nbt",
+      "logs_nbu", "logs_nbv", "logs_nbw", "logs_nbx", "logs_nby", "logs_nbz"]
+
+
+// POC for ingesting paginated logs this will allows us to load larger log files 
+const testPaginatedLogs = (setDownloadProgress: (percent: number) => void, setLogs: (logs: string[]) => void, logs: string[], navigate : (path: string) => void) => {
+ axios.all(logs_array.map(log =>  axios.get(`http://localhost:3000/${log}`, {
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
+      onDownloadProgress: (progressEvent) => {
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        setDownloadProgress(percentCompleted);
+      },
+      responseType: "text"
+    }))).then(axios.spread((...responses) => {
+        responses.forEach((response, i) => {
+            logs.push(...response.data.split("\n"))
+        })
+        setLogs(logs)
+        navigate("/logs");
+    })
+    ).catch(error => {
+        console.log(error);
+    }
+    );
+}
+
+const testSingleLogDownload = (setDownloadProgress: (percent: number) => void, setLogs: (logs: string[]) => void, navigate : (path: string) => void) => {
+    axios.get(`http://localhost:3000/${logs_array[0]}`, {
+        maxBodyLength: Infinity,
+        maxContentLength: Infinity,
       onDownloadProgress: (progressEvent) => {
         const percentCompleted = Math.round(
           (progressEvent.loaded * 100) / progressEvent.total
@@ -18,22 +72,13 @@ const Loader = () => {
       },
       responseType: "text"
     }).then(response => {
-        setLogs(response.data.split("\n"));
+        let logs = response.data.split("\n")
+        // If this is a resmoke log lets apply some processing to it to transform it into a human readable log
+        // logs = logs.map(line ==> applySomeProcessingFunction(line))
+        setLogs(logs)
+        // After logs have been saved to the context lets navigate to the logs page and render it to the user
         navigate("/logs");
     })
-
-
- 
-  }, []);
-
-  return (
-    <div className="Loader">
-               {downloadProgress > 0 && downloadProgress < 100 && (
-         <i>Downloading: {downloadProgress} %</i> 
-        )}
-
-    </div>
-  )
 }
 
 export default Loader;

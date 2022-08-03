@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 
+// These text inputs exist in their own contained components and manage their own state.
+// This is an important distinction since we don't need to recalculate the entire react tree for the entire page.
+
 export const Input: React.VFC<{ onChange: (input: string) => void }> = ({
   onChange
 }) => {

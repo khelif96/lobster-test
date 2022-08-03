@@ -1,10 +1,16 @@
 const parseLogs = (logs: string[], filters: string[], bookmarks: number[]) => {
+    // Joining the regex to match the logs allows us to do one match instead of n matches for each log line
   const joinRegexp = filters.join("|");
   if (filters.length === 0) {
     return Object.keys(logs);
   }
-  console.time("start reduce");
-  let result = logs.reduce((acc, log, index) => {
+
+  // Observe how we only use methods such as .push instead of duplicating elements in the array.
+//  These methods are faster than duplicating elements in the array since .push transforms the in memory reference of the array.
+// This goes against the principle of immutable data structures. But it is significantly more performant than creating a new array.
+//   
+  return logs.reduce((acc, log, index) => {
+    // if the line is bookmarked don't perform any matching on it 
     if (bookmarks.includes(index)) {
       acc.push(index);
     } else {
@@ -12,6 +18,8 @@ const parseLogs = (logs: string[], filters: string[], bookmarks: number[]) => {
       if (hasMatch) {
         acc.push(index);
       } else {
+        // Store a nested array to represent unmatching lines. This is to make it easier to display the logs in the UI.
+        
         if (Array.isArray(acc[acc.length - 1])) {
           acc[acc.length - 1].push(index);
         } else {
@@ -21,8 +29,6 @@ const parseLogs = (logs: string[], filters: string[], bookmarks: number[]) => {
     }
     return acc;
   }, [] as any);
-  console.timeEnd("start reduce");
-  return result;
 };
 
 export { parseLogs };
@@ -42,6 +48,9 @@ export const toggleArray = (
   }
   return tempArray;
 };
+
+
+// This will help us 
 const dateRegex = new RegExp(/\$date":"(.+)"}/);
 const msgRegex = new RegExp(/"msg":"(.+)","/);
 export const processLine = (line: string) => {
@@ -61,39 +70,3 @@ export const processLine = (line: string) => {
   return lineText;
 };
 
-export function findJSONObjectsInLine(text: string): string[] {
-  let startIndex = 0;
-  let numBraces = 0;
-  const chunks: string[] = [];
-  for (let i = 0; i < text.length; i++) {
-    if (text[i] === "{") {
-      if (numBraces === 0 && i !== 0) {
-        chunks.push(text.substring(startIndex, i));
-        startIndex = i;
-      }
-      numBraces++;
-    } else if (text[i] === "}") {
-      numBraces--;
-      if (numBraces === 0) {
-        try {
-          const startingLineBreak = startIndex === 0 ? "" : "\n";
-          const endingLineBreak = i === text.length - 1 ? "" : "\n";
-          const jsonObj = JSON.parse(text.substring(startIndex, i + 1));
-          const formattedString =
-            startingLineBreak +
-            JSON.stringify(jsonObj, null, 2).replace(/"([^"]+)":/g, "$1:") +
-            endingLineBreak;
-          chunks.push(formattedString);
-          startIndex = i + 1;
-        } catch (e) {
-          chunks.push(text.substring(startIndex, i));
-          startIndex = i;
-        }
-      }
-    }
-  }
-  if (startIndex !== text.length) {
-    chunks.push(text.substring(startIndex));
-  }
-  return chunks;
-}

@@ -20,7 +20,6 @@
 }
 
 .listRow {
-  overflow-x: scroll;
   overflow-y: hidden;
   display: flex;
   justify-content: start;
@@ -35,6 +34,8 @@
   background-color: #f0f0f0;
   color: blue;
 }
+
+
 
 @keyframes logo-spin {
   from {
@@ -58,4 +59,9 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.App {
+  max-height: 80vh;
+  ;
 }
