@@ -47,3 +47,26 @@ export const JumpToLine: React.VFC<{ jump: (line: number) => void }> = ({
     </div>
   );
 };
+
+
+export const Search: React.VFC<{ onChange: (input: string) => void }> = ({
+    onChange
+    }) => {
+    const [input, setInput] = useState("");
+
+    const handleChange = (e) => {
+        e.preventDefault();
+        onChange(input);
+        setInput("");
+    };
+    return (
+        <div>
+            <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+            />
+            <button onClick={handleChange}>Search</button>
+        </div>
+    );
+}

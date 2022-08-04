@@ -9,6 +9,7 @@
     overflow-x: scroll;
     font-family: monospace;
     overflow-y: hidden;
+    height: 16px;
 }
 
 .line:hover {

@@ -1,8 +1,8 @@
 import "./styles.css";
 import { parseLogs, toggleArray } from "./utils";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { Input, JumpToLine } from "./Input";
+import { Input, JumpToLine, Search } from "./Input";
 import { useAppContext } from "./AppContext";
 import ReactVirtualizedList from "./ReactVirtualizedList";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,7 @@ import { CellMeasurerCache, CellMeasurer } from "react-virtualized/dist/commonjs
   const [bookmarks, setBookmarks] = useState<number[]>([]);
   const [filters, setFilters] = useState<string[]>([]);
   const [scrolledIndex, setScrolledIndex] = useState(-1);
-  const [visibleLines, setVisibleLines] = useState<number[]>([]);
+  const [search, setSearch] = useState<string>("");
   const {logs: allLogs} = useAppContext()
   const navigate = useNavigate();
   useEffect(() => {
@@ -24,19 +24,48 @@ import { CellMeasurerCache, CellMeasurer } from "react-virtualized/dist/commonjs
   const addInput = (input: string) => {
     setFilters((curr) => [...curr, input]);
   };
+
+  const addSearch = (input: string) => {
+    setSearch(input);
+}
   const listref = useRef(null);
 
   const scrollTo = (line: number) => {
     setScrolledIndex(line)
   };
 
-useEffect(() => {
-    (async () => {
-      setVisibleLines(parseLogs(allLogs, filters, bookmarks));
-      console.timeEnd("parseLogs")
-    })()    
-    console.timeEnd("filter start")
-  }, [filters, bookmarks, allLogs])
+  
+  
+  const visibleLines = parseLogs(allLogs, filters, bookmarks)
+  
+    let range = {
+        start: 50,
+        end: 90
+        };
+    
+      const searchResults = useMemo(() => {
+        if (!search) {
+            return null;
+        }
+        const regex = new RegExp(search, "i");
+        const matchingSearches = []
+        for(let i =0; i<visibleLines.length; i++) {
+            if (Array.isArray(visibleLines[i])  || visibleLines[i] < range.start){
+                continue
+            }
+            // visibleLines = [[0...8], 9, 10, 11,1]
+            // 10 -> 50
+            if (visibleLines[i] > range.end) {
+                break;
+            } 
+            if (regex.test(allLogs[visibleLines[i]])) {
+                matchingSearches.push(i);
+            }
+        }
+        return matchingSearches
+    }, [search, visibleLines, allLogs])
+
+    console.log(searchResults)
   return (
     <div className="App">
       <div>
@@ -44,8 +73,10 @@ useEffect(() => {
         <b>Line count: {allLogs.length}</b>
  
       </div>
+      {/*  */}
       <Input onChange={addInput} />
       <JumpToLine jump={scrollTo} />
+      <Search onChange={addSearch} />
       {filters.map((filter, index) => (
         <div onClick={() => setFilters(toggleArray(filter, filters))}>
           {filter}

@@ -24,6 +24,8 @@
   display: flex;
   justify-content: start;
   cursor: pointer;
+  white-space: nowrap;
+  height: 16px;
 }
 
 .match {

@@ -63,7 +63,7 @@ const testPaginatedLogs = (setDownloadProgress: (percent: number) => void, setLo
 
 const testSingleLogDownload = (setDownloadProgress: (percent: number) => void, setLogs: (logs: string[]) => void, navigate : (path: string) => void) => {
     // Random logkeeper log
-    axios.get(`https://logkeeper.mongodb.org/build/f65bd46cbd26f244ba97965e36d0ace9/test/62ea3bdf9041307bcb7b98d9?raw=1`, {
+    axios.get(`https://logkeeper.mongodb.org/build/9503644774bc783503affdc4e60337b6/test/62e7bb45f84ae85772236805?raw=1`, {
         maxBodyLength: Infinity,
         maxContentLength: Infinity,
       onDownloadProgress: (progressEvent) => {
